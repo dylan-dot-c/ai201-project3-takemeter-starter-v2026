@@ -3,6 +3,11 @@
 Five criteria that say what "working" means for this classifier, written in
 unit 5 **before** anything was trained.
 
+> **Disclosure:** This is an AI-assisted draft prepared for a synthetic
+> practice dataset, not criteria personally developed from reading a real
+> community sample. Review and rewrite the targets and reasons in your own
+> words before treating them as your project criteria.
+
 **All five are yours this time.** None are given. You've had two projects of
 practice.
 
@@ -51,63 +56,61 @@ whether you hit them:
 
 ---
 
-## 1.
+## 1. Overall accuracy
 
-<!-- Your criterion. It must name a number. -->
+Across the three held-out test splits, accuracy is at least **0.65 on each
+seed**.
 
-
-
-**Why this target:**
-
-
-
----
-
-## 2.
-
-<!-- Your criterion. -->
-
-
-
-**Why this target:**
-
-
+**Why this target:** With three labels, a uniform random guess is right about
+one time in three. Requiring 65% means the classifier must do substantially
+better than guessing on these synthetic WRC and game-discussion posts.
+This target still needs reconsideration against a real sample.
 
 ---
 
-## 3.
+## 2. Macro F1
 
-<!-- Your criterion. -->
+Macro F1 is at least **0.60 on each of the three seeds**.
 
-
-
-**Why this target:**
-
-
-
----
-
-## 4.
-
-<!-- Your criterion. -->
-
-
-
-**Why this target:**
-
-
+**Why this target:** Macro F1 weights `analysis`, `hot_take`, and `reaction`
+equally, so a strong score on one kind of example cannot hide a weak score on
+another. The synthetic dataset is close to balanced and cannot establish how
+frequently these types occur in the real WRC community.
 
 ---
 
-## 5.
+## 3. Per-label performance
 
-<!-- Your criterion. -->
+The F1 score for **each label is at least 0.45 on every seed**.
 
+**Why this target:** A useful classifier should not effectively ignore one of
+the three kinds of game discussion. The threshold is intentionally lower than
+the macro-F1 target because each class has only about ten examples (10–11) in this
+synthetic 15% test split, so a few borderline posts can move its F1
+considerably.
 
+---
 
-**Why this target:**
+## 4. Dataset balance
 
+No one label accounts for more than **70%** of the labelled posts.
 
+**Why this target:** If one label dominates, a model can look accurate by
+repeatedly guessing it and still fail to distinguish analysis, unsupported
+opinions, and personal reactions. The 70% ceiling is also the notebook's
+explicit warning threshold. This synthetic dataset was intentionally balanced,
+so passing this check does not show that a real Reddit sample is balanced.
+
+---
+
+## 5. Confidence
+
+On each seed, accuracy in the most-confident third is at least **0.70** and is
+at least **0.10 higher** than accuracy in the least-confident third.
+
+**Why this target:** If the model is to be used to sort community posts, its
+most certain predictions should be dependable. A ten-point gap asks confidence
+to rank predictions meaningfully rather than merely producing high scores.
 
 ---
 
