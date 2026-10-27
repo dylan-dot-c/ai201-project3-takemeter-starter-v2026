@@ -222,6 +222,27 @@ on synthetic data only. The three-seed comparison is for Unit 6.
 - *What I changed:* I disclosed the synthetic source here and in every row's
   `note`, and report the model's numbers only as results on synthetic data.
 
+**Moment 3 (Unit 6)**
+
+- *What I asked for:* Run the baseline, the three seeds and the confusion
+  matrix, and work out why `hot_take` was the weakest label.
+- *What came back:* The AI retrained each seed and printed the 8 posts the
+  model got wrong. That showed they were plain, unambiguous hot takes
+  predicted at 0.35–0.43 confidence, which pointed at under-training rather
+  than labelling and led to the epochs change.
+- *What I changed:* I kept the improvement to one setting (epochs) as the
+  unit requires, and reported criterion 5 as MISSED after the change rather
+  than reading it generously.
+
+**Moment 4 (Unit 6)**
+
+- *What I asked for:* Label the 30 staff posts under the staff taxonomy.
+- *What came back:* `my_staff_labels.csv`, with the rule used on each
+  borderline post (listed in the Agreement Report).
+- *What I changed:* Nothing yet. These labels were AI-assisted, like
+  `labels.csv`, so the agreement rate will measure that same labelling
+  process.
+
 **Pre-labelling disclosure:** All 205 posts and their labels were generated
 together by AI. No real posts were pre-labelled, and I did not do the
 cold-labelling pass.
@@ -235,118 +256,184 @@ cold-labelling pass.
 
 ## Baseline vs. Trained
 
-<!-- Both models on the same posts. `python baseline.py --trained results.json`
-     prints this table for you. -->
+Zero-shot `facebook/bart-large-mnli` given only `label_definitions.txt`, scored
+on the same 31 posts in `test_split.csv` as the trained model (seed 42, the
+3-epoch Unit 5 run).
 
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.355 | 0.871 | +0.516 |
+| Macro F1 | 0.175 | 0.865 | +0.691 |
+| F1 — `analysis` | 0.524 | 0.846 | +0.322 |
+| F1 — `hot_take` | 0.000 | 0.750 | +0.750 |
+| F1 — `reaction` | 0.000 | 1.000 | +1.000 |
 
-**What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+**What I predicted before I looked:** The trained model's Unit 5 numbers were
+already known, so this isn't a blind prediction. Before running the baseline,
+I expected it to do best on `analysis`, because the posts with numbers and
+names look the most "argued", and worst on `hot_take` vs `reaction`, because
+both are short and unsupported.
 
-**What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
+**What the gap actually means:** The baseline didn't find the task hard in an
+interesting way. It labelled **all 31 posts `analysis`**, so its 0.355 is
+just the share of `analysis` posts in the test split. My definitions all
+mention WRC, the game and the writer's reasoning, and the zero-shot model
+apparently read every post as "about WRC with a point to make".
 
+I also ran it once with **bare label names** (no definitions file):
 
+| Measure | Baseline, bare names | Baseline, my definitions |
+|---|---|---|
+| Overall accuracy | 0.484 | 0.355 |
+| Macro F1 | 0.438 | 0.175 |
+| F1 — `analysis` | 0.167 | 0.524 |
+| F1 — `hot_take` | 0.516 | 0.000 |
+| F1 — `reaction` | 0.632 | 0.000 |
+
+With bare names it called 21 of 31 posts `hot_take`. So my definitions made
+the zero-shot baseline **worse** by 0.129 accuracy. They work for a person
+deciding between labels, but as a prompt for an entailment model every post
+matches the `analysis` definition. Fine-tuning added a lot here (+0.52
+accuracy), but it was beating a baseline that was close to always guessing
+one label.
 
 ---
 
 ## Run Log — Before
 
-<!-- Five criteria across three seeds. The notebook's section 6 prints the
-     spread table; the Target and Verdict columns are yours. -->
+Seeds 42, 7 and 2024. Notebook defaults: 3 epochs, lr 2e-5, batch 16, max
+length 128. Device: CPU (PyTorch 2.14.1+cpu). Test split is 31 posts per seed
+(10–11 per label).
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.65 every seed | 0.871 | 0.968 | 0.903 | MET |
+| 2. Macro F1 | ≥ 0.60 every seed | 0.865 | 0.967 | 0.896 | MET |
+| 3. Every label's F1 (lowest shown) | ≥ 0.45 every seed | 0.750 (`hot_take`) | 0.947 (`hot_take`) | 0.824 (`hot_take`) | MET |
+| 4. Largest label share | ≤ 70% | 34.1% | 34.1% | 34.1% | MET |
+| 5. Confidence: top third ≥ 0.70 and ≥ 0.10 above bottom third | both | 1.000 vs 0.700 (gap 0.30) | 1.000 vs 0.900 (gap 0.10) | 1.000 vs 0.800 (gap 0.20) | MET |
+
+Spread across seeds: accuracy moved 0.097 and `hot_take` F1 moved 0.197. That
+is just under the notebook's ten-point warning line, so a target that landed
+inside that band couldn't really be called either way.
 
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
+Seed 42, printed by section 7:
 
-| true \ predicted |  |  |  |
+| true \ predicted | analysis | hot_take | reaction |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **analysis** | 11 | 0 | 0 |
+| **hot_take** | 4 | 6 | 0 |
+| **reaction** | 0 | 0 | 10 |
 
-**My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
+Summed across all three seeds (93 test posts):
 
+| true \ predicted | analysis | hot_take | reaction |
+|---|---|---|---|
+| **analysis** | 33 | 0 | 0 |
+| **hot_take** | 5 | 22 | 3 |
+| **reaction** | 0 | 0 | 30 |
 
+**My biggest off-diagonal number, and what it means:** 4 real `hot_take`
+posts were called `analysis` on seed 42, and none went the other way. Across
+all three seeds, **every one of the 8 errors was a true `hot_take`**: 5 went
+to `analysis` and 3 to `reaction`. The model never mislabelled a real
+`analysis` or `reaction` post. It hadn't learned what a `hot_take` is, only
+what the other two look like, and it put plain confident claims into
+whichever of those they resembled on the surface.
 
 ---
 
 ## Verdicts and Diagnoses
 
-<!-- MET or MISSED against LAST UNIT's target. The target has to hold across
-     all three seeds, not turn up sometimes. -->
+Against the Unit 5 targets, before the improvement:
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | ≥ 0.65 every seed | MET | Lowest seed was 0.871. |
+| 2 | Macro F1 | ≥ 0.60 every seed | MET | Lowest seed was 0.865. |
+| 3 | Per-label F1 | ≥ 0.45 every label, every seed | MET | Lowest of all nine values was `hot_take` 0.750 on seed 42. |
+| 4 | Balance | no label > 70% | MET | Largest label is `analysis` at 70/205 = 34.1%. |
+| 5 | Confidence | top third ≥ 0.70 and ≥ 0.10 above bottom third | MET | Top third was 1.000 on all seeds. Seed 7's gap is exactly 0.10 (10/10 vs 9/10), so it meets "at least 0.10" with nothing to spare. One more error in the top third would have made it a miss. |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+No criterion was missed before the improvement, so there's no miss to
+diagnose. What I can diagnose is the **weakest label**, `hot_take`, which was
+lowest on all three seeds and accounts for all 8 errors. These are the posts
+it got wrong (found by retraining each seed with the notebook's functions):
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+| Seed | Post | Predicted | Model confidence |
+|---|---|---|---|
+| 42 | "Toyota drivers only win because of the car. Put them in a Hyundai and they're midfield." | `analysis` | 0.43 |
+| 42 | "Fourmaux is the fastest driver in the world right now." | `analysis` | 0.39 |
+| 42 | "Co-drivers deserve as much credit as drivers and the titles should reflect that." | `analysis` | 0.41 |
+| 42 | "Kenya is the worst rally on the calendar and it should be dropped." | `analysis` | 0.39 |
+| 7 | "Pajari will be world champion within two years. Book it." | `reaction` | 0.35 |
+| 2024 | "Night stages are a gimmick and add nothing." | `reaction` | 0.38 |
+| 2024 | "Setups don't matter. Anyone saying otherwise is coping." | `reaction` | 0.39 |
+| 2024 | "Fourmaux won SS1 in Finland which proves he's the fastest driver alive, period." | `analysis` | 0.41 |
 
+**Cause: the model was under-trained, not the labels inconsistent.** Evidence:
 
+1. **The posts aren't borderline.** Seven of the eight are textbook
+   `hot_take`s with no fact in them at all. Only the Fourmaux SS1 post is one
+   of my 12 deliberate hard cases. If this were a labelling problem, the
+   errors would cluster on hard cases, and they don't.
+2. **The model was barely more confident than a coin toss.** Every wrong
+   answer had a top probability of 0.35–0.43, against 0.33 for a pure
+   three-way guess. Mean confidence was only 0.41–0.44 even on correct
+   answers.
+3. **Training loss stopped at about 0.96.** An untrained three-label model
+   starts at ln 3 ≈ 1.10, so three epochs on 143 posts moved it very little.
+   Validation loss was still falling at every epoch on all three seeds (seed
+   42: 1.01 → 0.91 → 0.86), so training stopped before it levelled off.
+4. **The direction matches surface cues.** Four of the five errors sent to
+   `analysis` name a team, driver or rally (Toyota, Fourmaux twice, Kenya),
+   as nearly all `analysis` posts do. The three sent to `reaction` are short and
+   punchy, like most `reaction` posts. An under-trained model leans on cues
+   like that.
+
+**What the agreement report can and can't add:** it's the instrument that
+separates a labelling problem from a model problem, but the staff answer key
+hasn't come back from my TF yet (see below). My 30 staff labels were made the
+same way my `labels.csv` was, so once the rate is in it tests that labelling
+process directly. Until then, the evidence above is what the diagnosis rests
+on.
 
 ---
 
 ## Agreement Report
 
-<!-- Your rate against the staff set, and every disagreement adjudicated.
+**Status:** I labelled all 30 staff posts under `data/staff_taxonomy.md` and
+committed them as `my_staff_labels.csv`, without seeing the staff labels.
+`data/staff_labels.csv` comes from the TF, and **I haven't received it yet**,
+so `python agreement.py` hasn't been run.
 
-     Remember you labelled these 30 under the STAFF taxonomy in
-     data/staff_taxonomy.md, not your own — so every argument below is made
-     from those definitions and those decision rules. -->
+**Agreement rate:** ___ / 30 = ___% *(pending staff labels)*
 
-**Agreement rate:** ___ / 30 = ___%
+**How my 30 were labelled:** like `labels.csv`, they were labelled with AI
+help (see How I Used AI). That makes this a fair check of the process that
+produced my training labels. These are the posts where I had to use a rule,
+so they're where I expect any disagreements:
 
-<!-- Nobody grades this number. A 60% who argues every disagreement from the
-     stated rules beats a 95% who wrote "staff was right" nine times. Several
-     of the 30 were chosen because they're genuinely ambiguous — you should be
-     winning some of these. -->
+| Post | My label | Rule I used |
+|---|---|---|
+| sp_005 "Carbon plates aren't the whole story. My times dropped 2%…" | `analysis` | Rule 1: the second 2% drop, in the same shoes, is the reason for the conclusion. |
+| sp_007 "Ran the same loop in 4C and in 24C…" | `analysis` | Rule 3: personal and recent, but the 90 seconds is the argument. |
+| sp_010 "Three of us ran the same session…" | `analysis` | Rule 1: a sample of three, but the 10-second comparison carries the claim. |
+| sp_014 "Times are down about 3% since the shoe rules changed, so obviously…" | `hot_take` | Rule 1: almost the staff's own example. The 3% is decoration on a conclusion already reached. |
+| sp_019 "Nobody actually enjoys the long run…" | `hot_take` | Rule 2: a general claim about everyone, not the writer's own experience. |
+| sp_021 "Four minutes off. FOUR…" | `reaction` | Rule 2: the number is the event, and the post is about how it felt. |
+| sp_027 "Wind was so bad on the out section I was leaning at about 20 degrees…" | `reaction` | The 20 degrees is description, not evidence for a claim. |
 
 **Disagreements**
 
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
-
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
+*To fill in once `agreement.py` has run: three lines per disagreement (the
+post, both labels, my call and why from the staff rules), then the pile:
+(a) applied loosely, (b) rule doesn't say, (c) ambiguous and my reading is
+defensible.*
 
 **1.**
 > *The post:*
@@ -357,56 +444,89 @@ cold-labelling pass.
 >
 > *Which pile:*
 
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**What the pattern in my disagreements tells me:**
-
-
+**What the pattern in my disagreements tells me:** *(pending)*
 
 ---
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** One training setting. `EPOCHS` went from **3 to 8** in
+section 2 of the notebook. Labels, taxonomy, data and criteria are unchanged.
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:** The `hot_take` diagnosis above. The
+errors were confident-sounding but unambiguous posts, made at close to chance
+confidence, with training loss barely below its starting value. That's an
+under-trained model, not mislabelled data. Relabelling would have changed
+posts that were already labelled correctly, and adding more `hot_take`s would
+have left the same three-epoch budget to learn from them.
 
 ### Run Log — After
 
+Same seeds, same splits, same device. Only `EPOCHS = 8` changed.
+
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.65 every seed | 1.000 | 1.000 | 1.000 | MET |
+| 2. Macro F1 | ≥ 0.60 every seed | 1.000 | 1.000 | 1.000 | MET |
+| 3. Every label's F1 (lowest shown) | ≥ 0.45 every seed | 1.000 | 1.000 | 1.000 | MET |
+| 4. Largest label share | ≤ 70% | 34.1% | 34.1% | 34.1% | MET |
+| 5. Confidence: top third ≥ 0.70 and ≥ 0.10 above bottom third | both | 1.000 vs 1.000 (gap 0.00) | 1.000 vs 1.000 (gap 0.00) | 1.000 vs 1.000 (gap 0.00) | MISSED |
 
-**Did it help, and how do I know:**
+Confusion matrix after (seed 42; seeds 7 and 2024 are also all on the
+diagonal):
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+| true \ predicted | analysis | hot_take | reaction |
+|---|---|---|---|
+| **analysis** | 11 | 0 | 0 |
+| **hot_take** | 0 | 10 | 0 |
+| **reaction** | 0 | 0 | 10 |
 
+**Did it help, and how do I know:** Yes, on the problem it was aimed at.
+All 8 `hot_take` errors are gone on all three seeds, including the Fourmaux
+SS1 hard case. Mean confidence on correct answers rose from 0.41–0.44 to
+0.74–0.77, and final training loss fell from about 0.96 to 0.56–0.61. That's
+what fixing under-training should look like. The cost is time: each seed took
+about 170 s to train instead of about 65 s on CPU.
 
+Two caveats. First, criterion 5 went from MET to **MISSED**. The model didn't
+get worse; with zero errors the bottom third can't be 0.10 below the top
+third. Its diagnosis is under What's Still Broken, and the criterion revision
+is in `criteria.md`. Second, 1.000 on 31 synthetic posts says the synthetic
+task is easy to separate. It doesn't say the classifier is perfect.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+**Criterion 5 (confidence), MISSED after the improvement.** Cause: a ceiling
+effect, not a model fault. With 31/31 correct on every seed there is no error
+for confidence to rank, so the gap is 0.000 by construction. I didn't lower
+the target. I added a revision underneath the original in `criteria.md`,
+because the criterion as written can't tell "confidence doesn't rank errors"
+apart from "there are no errors". To actually test it I'd need a harder test
+set where the model makes mistakes, such as real r/EASPORTSWRC posts.
 
+**My targets were set too easily for this data.** Every accuracy and F1
+criterion passed on every seed even before the improvement. That's partly
+because the data is synthetic: posts were written to a target label, so
+`analysis` posts tend to be long with numbers, `hot_take`s short and flat,
+and `reaction`s exclamatory. I'm not revising those targets, since they were
+measurable and passing isn't a reason to revise. The fix is real data, not
+new numbers.
 
+**The agreement report is incomplete** until the TF sends
+`data/staff_labels.csv`. Then: run `python agreement.py`, commit
+`agreement_results.json`, and adjudicate each disagreement above.
 
 **The gap between what I meant my labels to capture and what the model
-learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
-
+learned:** I meant `analysis` vs `hot_take` to turn on whether a fact carries
+the argument. The before-matrix shows the 3-epoch model instead leaned on
+whether a post *mentions* a driver, team or rally: 4 of its 8 errors were
+plain claims naming one, sent to `analysis`. The 8-epoch model gets every
+test post right, but with only one decorative-fact hard case across the test
+splits, I can't show it learned "load-bearing fact" rather than "long post
+with numbers". Synthetic posts don't contain enough of the hard pattern to
+tell the difference.
 
 
 <!-- ═════════════════════════════════════════════════════════════════════
