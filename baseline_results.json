@@ -1,0 +1,189 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 31,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": true,
+  "scores": {
+    "n": 31,
+    "accuracy": 0.3548387096774194,
+    "f1_macro": 0.17460317460317462,
+    "per_label": {
+      "analysis": {
+        "precision": 0.3548387096774194,
+        "recall": 1.0,
+        "f1": 0.5238095238095238,
+        "support": 11
+      },
+      "hot_take": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 10
+      },
+      "reaction": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 10
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "Kenya fesh fesh: switched to the far chase cam just for the sandy sections and I could finally see the ruts under the dust. Saved about 6s on the stage vs cockpit, where I was guessing.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Just had the most beautiful sunset on Chile and stopped the car to look at it.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Ogier missed three rounds and still won six times. Six wins from eleven starts is a 55% win rate. Nobody else was close to that, so 'he only won because Evans choked' doesn't add up.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Wheel players are just slower pad players with expensive toys.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Today the pace notes finally clicked for me. I was actually listening instead of guessing.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Top five in the standings are all Toyota: Evans 162, Katsuta 151, Ogier 125, Pajari 116, Solberg 103. Comparing any of them to the Hyundai drivers this year mostly measures the car.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Game just froze mid-stage and lost my whole event. I want to throw my controller.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Watching Evans lose it on the final day again. Gutted for him, genuinely.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Watching the Monte onboards from this weekend and I'm getting chills.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Solberg in a factory Toyota still feels surreal to watch.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Neuville in Finland: suspension damage AND a 20 second penalty for checking in late to service, on the same day. Two separate self-inflicted problems is why he ended up fifth.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Evans leading the championship again. Please don't let it slip this time. I can't take it.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Toyota's fifth straight manufacturers' title came with a record-equalling 12 wins. Hyundai needs more than one fast driver to fight that, because the points come from all their cars scoring every weekend.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "The WRC2 title fight is giving me stress and I don't even have a favourite.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Hyundai's Finland was a disaster and it'll cost them the season.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Everyone calling Croatia 'unfair' is driving it like gravel. The tarmac is greasy in the shaded sections, so grip changes inside one corner. My times got 3s better once I treated shade as wet.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Started tracking where I lose time against the top 10% on clubs. 70% of the gap is slow corners, 20% braking, 10% everything else. So it's exits. Practise the slow stuff, not the flat-out bits.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Solberg is overrated. Always has been, the name does all the work.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Snow stages at night with the headlights on. Peak experience. I'm happy.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "The clubs leaderboard on Mediterraneo is skewed. Top 20 times all use the same two cars and nobody's running the other class. Fastest-car-wins isn't a balance problem, it's people picking the meta.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Real rally fans don't care about the hybrid era.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "The 2026 season is already over, Evans has it.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Toyota drivers only win because of the car. Put them in a Hyundai and they're midfield.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "My first sub-5 minute run on Monte stage 1!! 4:58! I've been trying for a week!!",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Fourmaux is the fastest driver in the world right now.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Co-drivers deserve as much credit as drivers and the titles should reflect that.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Codemasters confirmed Hard Chargers was the last content pack and that rally development is paused. So the handling we have is the handling we get. Anyone holding out for a physics patch should stop waiting.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "WRC2 after seven rounds: six different winners and the top four inside four points. Gryazin on 56, then Rossel, Korhonen and L\u00e9o Rossel all on 52. That's genuinely the best title fight in the sport right now.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Ogier should retire now while he's level with Loeb.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Kenya is the worst rally on the calendar and it should be dropped.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "The Vida stages don't have the same grip as Portugal even though they look similar. Same car, same setup, I was 2s off my Portugal pace and sliding on every exit. The surface must be coded differently.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    }
+  ]
+}
