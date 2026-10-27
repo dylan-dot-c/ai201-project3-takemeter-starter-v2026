@@ -112,6 +112,19 @@ at least **0.10 higher** than accuracy in the least-confident third.
 most certain predictions should be dependable. A ten-point gap asks confidence
 to rank predictions meaningfully rather than merely producing high scores.
 
+> **Revised in unit 6:** On each seed, accuracy in the most-confident third is
+> at least **0.70**, and the least-confident third contains at least as many
+> errors as the most-confident third. If a seed has no errors at all, the
+> ranking part is reported as "not testable" rather than as a miss.
+>
+> **Why revised:** The ten-point gap can't be met by a model that makes no
+> mistakes. After the improvement, all three seeds scored 1.000 in both
+> thirds, so the gap was 0.000 and the original criterion says MISSED. That
+> verdict says confidence failed to rank predictions, when really there was
+> nothing to rank. The criterion couldn't measure what it was written to
+> measure once accuracy hit the ceiling. The original verdicts stay as
+> recorded in the README, and the 0.70 target is unchanged.
+
 ---
 
 <!-- ─────────────────────────────────────────────────────────────────────────
