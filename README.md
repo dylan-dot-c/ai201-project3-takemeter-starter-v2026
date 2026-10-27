@@ -239,9 +239,10 @@ on synthetic data only. The three-seed comparison is for Unit 6.
 - *What I asked for:* Label the 30 staff posts under the staff taxonomy.
 - *What came back:* `my_staff_labels.csv`, with the rule used on each
   borderline post (listed in the Agreement Report).
-- *What I changed:* Nothing yet. These labels were AI-assisted, like
-  `labels.csv`, so the agreement rate will measure that same labelling
-  process.
+- *What I changed:* Nothing. The labels were committed before I got the
+  staff answer key, and matched it on 30/30. They were AI-assisted like
+  `labels.csv`, so the rate measures that same labelling process (see the
+  Agreement Report for what that does and doesn't show).
 
 **Pre-labelling disclosure:** All 205 posts and their labels were generated
 together by AI. No real posts were pre-labelled, and I did not do the
@@ -395,56 +396,64 @@ it got wrong (found by retraining each seed with the notebook's functions):
    punchy, like most `reaction` posts. An under-trained model leans on cues
    like that.
 
-**What the agreement report can and can't add:** it's the instrument that
-separates a labelling problem from a model problem, but the staff answer key
-hasn't come back from my TF yet (see below). My 30 staff labels were made the
-same way my `labels.csv` was, so once the rate is in it tests that labelling
-process directly. Until then, the evidence above is what the diagnosis rests
-on.
+**What the agreement report adds:** my labels matched staff on 30/30 posts,
+including all 7 staff hard cases and sp_014, the staff's own
+decorative-statistic example of the `analysis`/`hot_take` boundary. If my
+labelling applied that boundary loosely, it should have shown up here. It
+didn't, which points the `hot_take` errors at the model. Details are in the
+Agreement Report.
 
 ---
 
 ## Agreement Report
 
-**Status:** I labelled all 30 staff posts under `data/staff_taxonomy.md` and
-committed them as `my_staff_labels.csv`, without seeing the staff labels.
-`data/staff_labels.csv` comes from the TF, and **I haven't received it yet**,
-so `python agreement.py` hasn't been run.
+I labelled all 30 posts in `data/staff_posts.csv` under
+`data/staff_taxonomy.md` and committed them as `my_staff_labels.csv` (commit
+`6ebb14c`) **before** getting `data/staff_labels.csv` from my TF. Then I ran
+`python agreement.py`.
 
-**Agreement rate:** ___ / 30 = ___% *(pending staff labels)*
-
-**How my 30 were labelled:** like `labels.csv`, they were labelled with AI
-help (see How I Used AI). That makes this a fair check of the process that
-produced my training labels. These are the posts where I had to use a rule,
-so they're where I expect any disagreements:
-
-| Post | My label | Rule I used |
-|---|---|---|
-| sp_005 "Carbon plates aren't the whole story. My times dropped 2%…" | `analysis` | Rule 1: the second 2% drop, in the same shoes, is the reason for the conclusion. |
-| sp_007 "Ran the same loop in 4C and in 24C…" | `analysis` | Rule 3: personal and recent, but the 90 seconds is the argument. |
-| sp_010 "Three of us ran the same session…" | `analysis` | Rule 1: a sample of three, but the 10-second comparison carries the claim. |
-| sp_014 "Times are down about 3% since the shoe rules changed, so obviously…" | `hot_take` | Rule 1: almost the staff's own example. The 3% is decoration on a conclusion already reached. |
-| sp_019 "Nobody actually enjoys the long run…" | `hot_take` | Rule 2: a general claim about everyone, not the writer's own experience. |
-| sp_021 "Four minutes off. FOUR…" | `reaction` | Rule 2: the number is the event, and the post is about how it felt. |
-| sp_027 "Wind was so bad on the out section I was leaning at about 20 degrees…" | `reaction` | The 20 degrees is description, not evidence for a claim. |
+**Agreement rate:** 30 / 30 = 100%
 
 **Disagreements**
 
-*To fill in once `agreement.py` has run: three lines per disagreement (the
-post, both labels, my call and why from the staff rules), then the pile:
-(a) applied loosely, (b) rule doesn't say, (c) ambiguous and my reading is
-defensible.*
+None. There is nothing to adjudicate and nothing to sort into piles.
 
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+**The hard cases, and why they matched.** Staff marked 7 posts as
+borderline. These are the rules that decided each one, matching the staff
+reasoning:
 
-**What the pattern in my disagreements tells me:** *(pending)*
+| Post | Staff & me | The rule that settled it |
+|---|---|---|
+| sp_005 "Carbon plates aren't the whole story…" | `analysis` | Rule 1: the second 2% drop in the same shoes is load-bearing. |
+| sp_010 "Three of us ran the same session…" | `analysis` | Rule 1: a tiny sample, but the 10-second comparison is what the claim rests on. |
+| sp_014 "Times are down about 3%… so obviously…" | `hot_take` | Rule 1: the 3% decorates a conclusion already reached. |
+| sp_019 "Nobody actually enjoys the long run…" | `hot_take` | Rule 2: a claim about everyone, not the writer's own run. |
+| sp_020 "Every injury thread on this forum is the same…" | `hot_take` | Rule 1: checkable in principle, but no count is given. |
+| sp_028 "Third DNF this year…" | `reaction` | Rule 3 cuts both ways: "third" is countable, but nothing is argued from it. |
+| sp_029 "…the shoes I set every PB in…" | `reaction` | Rule 2: the writer's own realisation, not a claim about shoes. |
+
+I'd flagged sp_005, sp_010, sp_014 and sp_019 in advance, plus sp_007,
+sp_021 and sp_027, which staff treated as clear. I didn't anticipate sp_020,
+sp_028 and sp_029 as hard, but I labelled them the same way staff did.
+
+**What the pattern tells me:** Was the set easy, or is the rule tight? Some
+of each. The staff rules are tight: every hard case resolves on one of rules
+1–3 without needing the rule 4 tie-break. The set is also forgiving in one
+way: the three labels arrive in clean blocks of ten (sp_001–010, 011–020,
+021–030), and the clear posts are very clear. A rate of 100% from an
+AI-assisted labelling pass says the process applies a written rule
+consistently. It doesn't say that a person new to the taxonomy would match
+staff.
+
+**What it means for my diagnosis:** this is the evidence that separates a
+labelling problem from a model problem. The process that produced
+`labels.csv` applied someone else's `analysis`/`hot_take` rule correctly
+on every staff hard case, including the canonical decorative-statistic post
+(sp_014). That supports the diagnosis in Verdicts and Diagnoses: the
+`hot_take` errors came from an under-trained model, not from my labels
+applying the boundary two ways. One limit: my own posts were *written* to
+their labels, so their consistency is partly built in. The agreement check
+tests rule application, and that part held.
 
 ---
 
@@ -513,10 +522,6 @@ because the data is synthetic: posts were written to a target label, so
 and `reaction`s exclamatory. I'm not revising those targets, since they were
 measurable and passing isn't a reason to revise. The fix is real data, not
 new numbers.
-
-**The agreement report is incomplete** until the TF sends
-`data/staff_labels.csv`. Then: run `python agreement.py`, commit
-`agreement_results.json`, and adjudicate each disagreement above.
 
 **The gap between what I meant my labels to capture and what the model
 learned:** I meant `analysis` vs `hot_take` to turn on whether a fact carries
